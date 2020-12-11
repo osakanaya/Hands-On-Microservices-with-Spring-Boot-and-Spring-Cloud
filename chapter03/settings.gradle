@@ -1,0 +1,4 @@
+include ':microservices:product-service'
+include ':microservices:preview-service'
+include ':microservices:recommendation-service'
+include ':microservices:product-composite-service'
