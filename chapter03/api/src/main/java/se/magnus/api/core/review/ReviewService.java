@@ -11,5 +11,5 @@ public interface ReviewService {
 		value = "/review",
 		produces = "application/json"
 	)
-	List<Review> getReviews(@RequestParam(value = "productId", required = true) int productId);
+	List<Review> getReviews(@RequestParam(value = "productId", required = true) int productId);	
 }
