@@ -1,10 +1,13 @@
 server.port: 7001
+server.error.include-message: always
+
+spring.data.mongodb:
+  auto-index-creation: true
 
 logging:
   level:
     root: INFO
     se.magnus.microservices: DEBUG
-
 ---
 spring.profiles: docker
 

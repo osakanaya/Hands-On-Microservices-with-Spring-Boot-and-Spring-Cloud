@@ -1,10 +1,16 @@
 server.port: 7003
 server.error.include-message: always
 
+spring.jpa.hibernate.ddl-auto: update
+
+spring.datasource.hikari.initializationFailTimeout: 60000
+
 logging:
   level:
     root: INFO
     se.magnus.microservices: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 ---
 spring.profiles: docker
