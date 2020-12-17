@@ -78,7 +78,7 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	@Override
 	public List<Review> getReviews(int productId) {
 		try {
-			String url = reviewServiceUrl + productId;
+            String url = reviewServiceUrl + "?productId=" + productId;
 			LOG.debug("Will call getReviews API on URL: {}", url);
 
 			List<Review> reviews = restTemplate.exchange(url, GET, null, new ParameterizedTypeReference<List<Review>>() {}).getBody();
@@ -123,7 +123,7 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	@Override
 	public List<Recommendation> getRecommendations(int productId) {
 		try {
-			String url = recommendationServiceUrl + productId;
+            String url = recommendationServiceUrl + "?productId=" + productId;
 			LOG.debug("Will call getRecommendations API on URL: {}", url);
 			
 			List<Recommendation> recommendations = restTemplate.exchange(url, GET, null, new ParameterizedTypeReference<List<Recommendation>>() {}).getBody();
