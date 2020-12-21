@@ -1,21 +1,27 @@
 package se.magnus.microservices.composite.product;
 
+import static java.util.Collections.emptyList;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static springfox.documentation.builders.RequestHandlerSelectors.basePackage;
+import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.health.CompositeReactiveHealthContributor;
+import org.springframework.boot.actuate.health.ReactiveHealthContributor;
+import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.web.client.RestTemplate;
 
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spring.web.plugins.Docket;
-
-import static java.util.Collections.emptyList;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static springfox.documentation.builders.RequestHandlerSelectors.basePackage;
-import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 
 @SpringBootApplication
 @ComponentScan("se.magnus")
@@ -61,10 +67,25 @@ public class ProductCompositeServiceApplication {
 					emptyList()
 				));
 	}
+
+	@Autowired
+	ProductHealthIndicator productHealthIndicator;
+	
+	@Autowired
+	RecommendationHealthIndicator recommendationHealthIndicator;
+	
+	@Autowired
+	ReviewHealthIndicator reviewHealthIndicator;
 	
 	@Bean
-	RestTemplate restTemplate() {
-		return new RestTemplate();
+	public ReactiveHealthContributor coreServices() {
+		
+		Map<String, ReactiveHealthIndicator> contributorMap = new HashMap<>();
+		contributorMap.put("product", productHealthIndicator);
+		contributorMap.put("recommendation", recommendationHealthIndicator);
+		contributorMap.put("review", reviewHealthIndicator);
+		
+		return CompositeReactiveHealthContributor.fromMap(contributorMap);
 	}
 	
 	public static void main(String[] args) {
