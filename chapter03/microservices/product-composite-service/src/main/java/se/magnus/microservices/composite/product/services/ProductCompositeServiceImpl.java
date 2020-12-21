@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+import reactor.core.publisher.Mono;
 import se.magnus.api.composite.product.ProductAggregate;
 import se.magnus.api.composite.product.ProductCompositeService;
 import se.magnus.api.composite.product.RecommendationSummary;
@@ -16,7 +17,6 @@ import se.magnus.api.composite.product.ServiceAddresses;
 import se.magnus.api.core.product.Product;
 import se.magnus.api.core.recommendation.Recommendation;
 import se.magnus.api.core.review.Review;
-import se.magnus.util.exceptions.NotFoundException;
 import se.magnus.util.http.ServiceUtil;
 
 @RestController
@@ -78,22 +78,19 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
         
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public ProductAggregate getCompositeProduct(int productId) {
-        
-		LOG.debug("getCompositeProduct: lookup a product aggregate for productId: {}", productId);
-
-        Product product = integration.getProduct(productId);
-        if (product == null) {
-        	throw new NotFoundException("No product found for productId: " + productId);
-        }
-        
-        List<Recommendation> recommendations = integration.getRecommendations(productId);
-        List<Review> reviews = integration.getReviews(productId);
-        
-        LOG.debug("getCompositeProduct: aggregate entity found for productId: {}", productId);
-
-        return createProductAggregate(product, recommendations, reviews, serviceUtil.getServiceAddress());
+	public Mono<ProductAggregate> getCompositeProduct(int productId) {
+		
+		return Mono.zip(
+			values -> createProductAggregate((Product)values[0], (List<Recommendation>)values[1], 
+					(List<Review>)values[2], serviceUtil.getServiceAddress()),
+			integration.getProduct(productId),
+			integration.getRecommendations(productId).collectList(),
+			integration.getReviews(productId).collectList()
+		)
+		.doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex.toString()))
+		.log();
 	}
 
     private ProductAggregate createProductAggregate(Product product, List<Recommendation> recommendations, List<Review> reviews, String serviceAddress) {

@@ -29,10 +29,10 @@ public class PersistenceTests {
 
 	@BeforeEach
 	public void setUpDb() {
-		repository.deleteAll();
+		repository.deleteAll().block();
 
 		RecommendationEntity entity = new RecommendationEntity(1, 2, "a", 3, "c");
-		savedEntity = repository.save(entity);
+		savedEntity = repository.save(entity).block();
 
 		assertEqualsRecommendation(entity, savedEntity);
 	}
@@ -40,33 +40,33 @@ public class PersistenceTests {
 	@Test
 	public void create() {
 		RecommendationEntity newEntity = new RecommendationEntity(1, 3, "a", 3, "c");
-		repository.save(newEntity);
+		repository.save(newEntity).block();
 
-		RecommendationEntity foundEntity = repository.findById(newEntity.getId()).get();
+		RecommendationEntity foundEntity = repository.findById(newEntity.getId()).block();
 		assertEqualsRecommendation(newEntity, foundEntity);
 
-		assertEquals(2, repository.count());
+		assertEquals(2, repository.count().block());
 	}
 
 	@Test
 	public void update() {
 		savedEntity.setAuthor("a2");
-		repository.save(savedEntity);
+		repository.save(savedEntity).block();
 
-		RecommendationEntity foundEntity = repository.findById(savedEntity.getId()).get();
+		RecommendationEntity foundEntity = repository.findById(savedEntity.getId()).block();
 		assertEquals(1, (long) foundEntity.getVersion());
 		assertEquals("a2", foundEntity.getAuthor());
 	}
 
 	@Test
 	public void delete() {
-		repository.delete(savedEntity);
-		assertFalse(repository.existsById(savedEntity.getId()));
+		repository.delete(savedEntity).block();
+		assertFalse(repository.existsById(savedEntity.getId()).block());
 	}
 
 	@Test
 	public void getByProductId() {
-		List<RecommendationEntity> entityList = repository.findByProductId(savedEntity.getProductId());
+		List<RecommendationEntity> entityList = repository.findByProductId(savedEntity.getProductId()).collectList().block();
 
 		assertThat(entityList, hasSize(1));
 		assertEqualsRecommendation(savedEntity, entityList.get(0));
@@ -76,27 +76,27 @@ public class PersistenceTests {
 	public void duplicateError() {
 		assertThrows(DuplicateKeyException.class, () -> {
 			RecommendationEntity entity = new RecommendationEntity(1, 2, "a", 3, "c");
-			repository.save(entity);
+			repository.save(entity).block();
 		});
 	}
 
 	@Test
 	public void optimisticLockError() {
-		RecommendationEntity entity1 = repository.findById(savedEntity.getId()).get();
-		RecommendationEntity entity2 = repository.findById(savedEntity.getId()).get();
+		RecommendationEntity entity1 = repository.findById(savedEntity.getId()).block();
+		RecommendationEntity entity2 = repository.findById(savedEntity.getId()).block();
 
 		entity1.setAuthor("a1");
-		repository.save(entity1);
+		repository.save(entity1).block();
 
 		try {
 			entity2.setAuthor("a2");
-			repository.save(entity2);
+			repository.save(entity2).block();
 
 			fail("Expected an OptimisticLockingFailureException");
 		} catch (OptimisticLockingFailureException ex) {
 		}
 
-		RecommendationEntity updatedEntity = repository.findById(savedEntity.getId()).get();
+		RecommendationEntity updatedEntity = repository.findById(savedEntity.getId()).block();
 		assertEquals(1, (long) updatedEntity.getVersion());
 		assertEquals("a1", updatedEntity.getAuthor());
 	}
