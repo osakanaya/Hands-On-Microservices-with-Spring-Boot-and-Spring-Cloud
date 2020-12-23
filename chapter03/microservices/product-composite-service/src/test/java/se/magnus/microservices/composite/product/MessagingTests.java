@@ -34,7 +34,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import static java.util.Collections.singletonList;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"eureka.client.enabled=false"})
 public class MessagingTests {
 
 	@Autowired

@@ -1,7 +1,6 @@
 package se.magnus.microservices.composite.product;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -11,29 +10,28 @@ import reactor.core.publisher.Mono;
 @Component
 public class RecommendationHealthIndicator extends AbstractHealthIndicator {
 
-	private final WebClient webClient;
-	
-	private final String recommendationServiceUrl;
+	private final WebClient.Builder webClientBuilder;
+
+	private WebClient webClient;
 
 	@Autowired
 	public RecommendationHealthIndicator(
-		WebClient.Builder webClient,
-		@Value("${app.recommendation-service.host}")
-		String recommendationServiceHost,
-		@Value("${app.recommendation-service.port}")
-		int recommendationServicePort
+		WebClient.Builder webClientBuilder
 	) {
-		this.webClient = webClient.build();
-		this.recommendationServiceUrl = "http://" + recommendationServiceHost + ":" + recommendationServicePort;
+		this.webClientBuilder = webClientBuilder;
 	}
 	
 	@Override
 	protected WebClient getWebClient() {
+		if (webClient == null) {
+			webClient = webClientBuilder.build();
+		}
+		
 		return webClient;
 	}
 
 	@Override
 	public Mono<Health> health() {
-		return getHealth(recommendationServiceUrl);
+		return getHealth("http://recommendation");
 	}
 }

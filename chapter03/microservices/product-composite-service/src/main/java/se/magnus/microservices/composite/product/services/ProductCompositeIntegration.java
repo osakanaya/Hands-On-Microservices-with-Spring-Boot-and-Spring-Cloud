@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
@@ -37,13 +36,15 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 
 	private static final Logger LOG = LoggerFactory.getLogger(ProductCompositeIntegration.class);
 
-	private final WebClient webClient;
+	private final String productServiceUrl = "http://product";
+	private final String recommendationServiceUrl = "http://recommendation";
+	private final String reviewServiceUrl = "http://review";
+
 	private final ObjectMapper mapper;
+	private final WebClient.Builder webClientBuilder;
 
-	private final String productServiceUrl;
-	private final String recommendationServiceUrl;
-	private final String reviewServiceUrl;
-
+	private WebClient webClient;
+	
 	private MessageSources messageSources;
 	
 	public interface MessageSources {
@@ -64,41 +65,22 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	
 	@Autowired
 	public ProductCompositeIntegration(
-		WebClient.Builder webClient,
+		WebClient.Builder webClientBuilder,
 		ObjectMapper mapper,
-		MessageSources messageSources,
-
-		@Value("${app.product-service.host}")
-		String productServiceHost,
-		@Value("${app.product-service.port}")
-		int productServicePort,
-
-		@Value("${app.recommendation-service.host}")
-		String recommendationServiceHost,
-		@Value("${app.recommendation-service.port}")
-		int recommendationServicePort,
-
-		@Value("${app.review-service.host}")
-		String reviewServiceHost,
-		@Value("${app.review-service.port}")
-		int reviewServicePort
+		MessageSources messageSources
 	) {
-		this.webClient = webClient.build();
+		this.webClientBuilder = webClientBuilder;
 		this.mapper = mapper;
 		this.messageSources = messageSources;
-		
-		this.productServiceUrl = "http://" + productServiceHost + ":" + productServicePort + "/product/";
-		this.recommendationServiceUrl = "http://" + recommendationServiceHost + ":" + recommendationServicePort + "/recommendation";
-		this.reviewServiceUrl = "http://" + reviewServiceHost + ":" + reviewServicePort + "/review";
 	}
 	
 	@Override
 	public Flux<Review> getReviews(int productId) {
 
-		String url = reviewServiceUrl + "?productId=" + productId;
+		String url = reviewServiceUrl + "/review?productId=" + productId;
 		LOG.debug("Will call the getReviews API on URL: {}", url);
 
-		return webClient.get().uri(url).retrieve().bodyToFlux(Review.class).onErrorResume(error -> empty());
+		return getWebClient().get().uri(url).retrieve().bodyToFlux(Review.class).onErrorResume(error -> empty());
 			
 	}
 
@@ -119,10 +101,10 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	@Override
 	public Flux<Recommendation> getRecommendations(int productId) {
 
-		String url = recommendationServiceUrl + "?productId=" + productId;
+		String url = recommendationServiceUrl + "/recommendation?productId=" + productId;
 		LOG.debug("Will call the getRecommendations API on URL: {}", url);
 		
-		return webClient.get().uri(url).retrieve().bodyToFlux(Recommendation.class)
+		return getWebClient().get().uri(url).retrieve().bodyToFlux(Recommendation.class)
 				.log().onErrorResume(error -> empty());			
 	}
 
@@ -149,10 +131,10 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	@Override
 	public Mono<Product> getProduct(int productId) {
 
-		String url = productServiceUrl + productId;
+		String url = productServiceUrl + "/product/" + productId;
 		LOG.debug("Will call the getProduct API on URL: {}", url);
 
-		return webClient.get().uri(url).retrieve().bodyToMono(Product.class)
+		return getWebClient().get().uri(url).retrieve().bodyToMono(Product.class)
 				.log().onErrorMap(WebClientResponseException.class, ex -> handleHttpClientException(ex));
 	}
 	
@@ -160,6 +142,14 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	public void deleteProduct(int productId) {
 		messageSources.outputProducts().send(MessageBuilder.withPayload(
 				new Event<Integer, Product>(Event.Type.DELETE, productId, null)).build());
+	}
+	
+	private WebClient getWebClient() {
+		if (webClient == null) {
+			webClient = webClientBuilder.build();
+		}
+		
+		return webClient;
 	}
 	
 	private Throwable handleHttpClientException(Throwable ex) {

@@ -11,29 +11,28 @@ import reactor.core.publisher.Mono;
 @Component
 public class ReviewHealthIndicator extends AbstractHealthIndicator {
 
-	private final WebClient webClient;
-	
-	private final String reviewServiceUrl;
+	private final WebClient.Builder webClientBuilder;
 
+	private WebClient webClient;
+	
 	@Autowired
 	public ReviewHealthIndicator(
-		WebClient.Builder webClient,
-		@Value("${app.review-service.host}")
-		String reviewServiceHost,
-		@Value("${app.review-service.port}")
-		int reviewServicePort
+		WebClient.Builder webClientBuilder
 	) {
-		this.webClient = webClient.build();
-		this.reviewServiceUrl = "http://" + reviewServiceHost + ":" + reviewServicePort;
+		this.webClientBuilder = webClientBuilder;
 	}
 	
 	@Override
 	protected WebClient getWebClient() {
+		if (webClient == null) {
+			webClient = webClientBuilder.build();
+		}
+		
 		return webClient;
 	}
 
 	@Override
 	public Mono<Health> health() {
-		return getHealth(reviewServiceUrl);
+		return getHealth("http://review");
 	}
 }

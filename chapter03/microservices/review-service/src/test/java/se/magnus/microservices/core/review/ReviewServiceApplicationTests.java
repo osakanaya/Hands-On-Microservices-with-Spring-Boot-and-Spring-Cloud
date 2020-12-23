@@ -24,7 +24,10 @@ import se.magnus.api.event.Event;
 import se.magnus.microservices.core.review.persistence.ReviewRepository;
 import se.magnus.util.exceptions.InvalidInputException;
 
-@SpringBootTest(webEnvironment=RANDOM_PORT, properties = {"spring.datasource.url=jdbc:h2:mem:review-db"})
+@SpringBootTest(webEnvironment=RANDOM_PORT, properties = {
+		"logging.level.se.magnus=DEBUG",
+		"eureka.client.enabled=false",
+	    "spring.datasource.url=jdbc:h2:mem:review-db"})
 class ReviewServiceApplicationTests {
 
 	@Autowired
