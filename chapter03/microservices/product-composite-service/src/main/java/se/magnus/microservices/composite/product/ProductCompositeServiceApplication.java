@@ -5,15 +5,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static springfox.documentation.builders.RequestHandlerSelectors.basePackage;
 import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.health.CompositeReactiveHealthContributor;
-import org.springframework.boot.actuate.health.ReactiveHealthContributor;
-import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -70,26 +63,6 @@ public class ProductCompositeServiceApplication {
 				));
 	}
 
-	@Autowired
-	ProductHealthIndicator productHealthIndicator;
-	
-	@Autowired
-	RecommendationHealthIndicator recommendationHealthIndicator;
-	
-	@Autowired
-	ReviewHealthIndicator reviewHealthIndicator;
-	
-	@Bean
-	public ReactiveHealthContributor coreServices() {
-		
-		Map<String, ReactiveHealthIndicator> contributorMap = new HashMap<>();
-		contributorMap.put("product", productHealthIndicator);
-		contributorMap.put("recommendation", recommendationHealthIndicator);
-		contributorMap.put("review", reviewHealthIndicator);
-		
-		return CompositeReactiveHealthContributor.fromMap(contributorMap);
-	}
-	
 	@Bean
 	@LoadBalanced
 	public WebClient.Builder loadBalancedWebClientBuilder() {

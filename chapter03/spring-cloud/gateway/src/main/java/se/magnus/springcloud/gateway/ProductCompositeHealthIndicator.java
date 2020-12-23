@@ -1,4 +1,4 @@
-package se.magnus.microservices.composite.product;
+package se.magnus.springcloud.gateway;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
@@ -8,14 +8,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-public class ProductHealthIndicator extends AbstractHealthIndicator {
+public class ProductCompositeHealthIndicator extends AbstractHealthIndicator {
 
 	private final WebClient.Builder webClientBuilder;
 
 	private WebClient webClient;
 	
 	@Autowired
-	public ProductHealthIndicator(
+	public ProductCompositeHealthIndicator(
 		WebClient.Builder webClientBuilder
 	) {
 		this.webClientBuilder = webClientBuilder;
@@ -32,6 +32,6 @@ public class ProductHealthIndicator extends AbstractHealthIndicator {
 
 	@Override
 	public Mono<Health> health() {
-		return getHealth("http://product");
+		return getHealth("http://product-composite");
 	}
 }

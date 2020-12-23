@@ -1,7 +1,6 @@
-package se.magnus.microservices.composite.product;
+package se.magnus.springcloud.gateway;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -9,14 +8,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-public class ReviewHealthIndicator extends AbstractHealthIndicator {
+public class RecommendationHealthIndicator extends AbstractHealthIndicator {
 
 	private final WebClient.Builder webClientBuilder;
 
 	private WebClient webClient;
-	
+
 	@Autowired
-	public ReviewHealthIndicator(
+	public RecommendationHealthIndicator(
 		WebClient.Builder webClientBuilder
 	) {
 		this.webClientBuilder = webClientBuilder;
@@ -33,6 +32,6 @@ public class ReviewHealthIndicator extends AbstractHealthIndicator {
 
 	@Override
 	public Mono<Health> health() {
-		return getHealth("http://review");
+		return getHealth("http://recommendation");
 	}
 }
