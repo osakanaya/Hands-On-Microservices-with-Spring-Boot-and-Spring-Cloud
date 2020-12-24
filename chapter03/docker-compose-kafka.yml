@@ -126,6 +126,12 @@ services:
     ports:
       - "8080:8080"
 
+  auth-server:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    build: spring-cloud/authorization-server
+    mem_limit: 350m
+
   # $ mongo
   mongodb:
     image: mongo:3.6.9

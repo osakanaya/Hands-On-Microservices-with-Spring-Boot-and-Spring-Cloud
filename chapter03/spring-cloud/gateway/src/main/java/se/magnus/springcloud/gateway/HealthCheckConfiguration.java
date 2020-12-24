@@ -25,6 +25,9 @@ public class HealthCheckConfiguration {
 	@Autowired
 	ProductCompositeHealthIndicator productCompositeHealthIndicator;
 	
+	@Autowired
+	AuthServerHealthIndicator authServerHealthIndicator;
+	
 	@Bean
 	public ReactiveHealthContributor healthCheckCoreServices() {
 		
@@ -33,6 +36,7 @@ public class HealthCheckConfiguration {
 		contributorMap.put("recommendation", recommendationHealthIndicator);
 		contributorMap.put("review", reviewHealthIndicator);
 		contributorMap.put("product-composite", productCompositeHealthIndicator);
+		contributorMap.put("auth-server", authServerHealthIndicator);
 		
 		return CompositeReactiveHealthContributor.fromMap(contributorMap);
 	}
