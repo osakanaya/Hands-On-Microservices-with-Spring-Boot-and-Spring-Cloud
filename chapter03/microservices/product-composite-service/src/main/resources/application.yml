@@ -67,6 +67,7 @@ app:
   eureka-username: u
   eureka-password: p
   eureka-server: localhost
+  auth-server: localhost
 
 eureka:
   client:
@@ -109,6 +110,8 @@ spring.rabbitmq:
   username: guest
   password: guest
 
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
+
 logging:
   level:
     root: INFO
@@ -121,19 +124,10 @@ spring.profiles: docker
 
 server.port: 8080
 
-app:
-  product-service:
-    host: product
-    port: 8080
-  recommendation-service:
-    host: recommendation
-    port: 8080
-  review-service:
-    host: review
-    port: 8080
-
 spring.rabbitmq.host: rabbitmq
 
 spring.cloud.stream.kafka.binder.brokers: kafka
 
-app.eureka-server: eureka
+app:
+  eureka-server: eureka
+  auth-server: auth-server

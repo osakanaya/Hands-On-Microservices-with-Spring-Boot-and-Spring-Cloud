@@ -35,6 +35,11 @@ spring.cloud.gateway.routes:
   predicates:
   - Path=/product-composite/**
 
+- id: oauth-server
+  uri: lb://auth-server
+  predicates:
+  - Path=/oauth/**
+
 - id: eureka-api
   uri: http://${app.eureka-server}:8761
   predicates:
@@ -76,6 +81,8 @@ spring.cloud.gateway.routes:
   - Path=/headerrouting/**
   filters:
   - SetPath=/501
+
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
 
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
