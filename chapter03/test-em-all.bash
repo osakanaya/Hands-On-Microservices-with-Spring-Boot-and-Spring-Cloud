@@ -191,6 +191,8 @@ fi
 waitForService curl -k https://$HOST:$PORT/actuator/health
 
 ACCESS_TOKEN=$(curl -k https://writer:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+#ACCESS_TOKEN=$(curl --request POST --url "https://${TENANT_DOMAIN_NAME}/oauth/token" --header "content-type: application/json" --data "{\"grant_type\":\"password\", \"username\":\"${USER_EMAIL}\", \"password\":\"${USER_PASSWORD}\", \"audience\":\"https://localhost:8443/product-composite\", \"scope\":\"openid email product:read product:write\", \"client_id\":\"${CLIENT_ID}\", \"client_secret\":\"${CLIENT_SECRET}\"}" -s | jq -r .access_token)
+
 AUTH="-H \"Authorization: Bearer $ACCESS_TOKEN\""
 
 setupTestdata
@@ -231,6 +233,7 @@ assertCurl 401 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS
 
 # Verify that the reader - client with only read scope can call the read API but not delete API.
 READER_ACCESS_TOKEN=$(curl -k https://reader:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+#READER_ACCESS_TOKEN=$(curl --request POST --url "https://${TENANT_DOMAIN_NAME}/oauth/token" --header "content-type: application/json" --data "{\"grant_type\":\"password\", \"username\":\"${USER_EMAIL}\", \"password\":\"${USER_PASSWORD}\", \"audience\":\"https://localhost:8443/product-composite\", \"scope\":\"openid email product:read\", \"client_id\":\"${CLIENT_ID}\", \"client_secret\":\"${CLIENT_SECRET}\"}" -s | jq -r .access_token)
 READER_AUTH="-H \"Authorization: Bearer $READER_ACCESS_TOKEN\""
 
 assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $READER_AUTH -s"

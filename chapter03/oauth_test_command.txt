@@ -58,4 +58,24 @@ curl https://localhost:8443/product-composite/2 -k -H "Authorization: Bearer $AC
 
 curl https://localhost:8443/product-composite/2 -k -H "Authorization: Bearer $ACCESS_TOKEN" -X DELETE -i
 
+>>>>>>>> Auth0
 
+curl --request POST --url "https://${TENANT_DOMAIN_NAME}/oauth/token" --header "content-type: application/json" --data "{\"grant_type\":\"password\", \"username\":\"${USER_EMAIL}\", \"password\":\"${USER_PASSWORD}\", \"audience\":\"https://localhost:8443/product-composite\", \"scope\":\"openid email product:read\", \"client_id\":\"${CLIENT_ID}\", \"client_secret\":\"${CLIENT_SECRET}\"}" -s | jq
+
+curl --request POST --url "https://${TENANT_DOMAIN_NAME}/oauth/token" --header "content-type: application/json" --data "{\"grant_type\":\"password\", \"username\":\"${USER_EMAIL}\", \"password\":\"${USER_PASSWORD}\", \"audience\":\"https://localhost:8443/product-composite\", \"scope\":\"openid email product:read product:write\", \"client_id\":\"${CLIENT_ID}\", \"client_secret\":\"${CLIENT_SECRET}\"}" -s | jq
+
+>>>
+
+https://${TENANT_DOMAIN_NAME}/authorize?response_type=token&scope=openid email product:read product:write&client_id=${CLIENT_ID}&state=98421&nonce=jxdlsjfi0fa&redirect_uri=http://my.redirect.uri&audience=https://localhost:8443/product-composite
+
+https://${TENANT_DOMAIN_NAME}/authorize?response_type=token&scope=openid email product:read&client_id=${CLIENT_ID}&state=98421&nonce=jxdlsjfi0fa&redirect_uri=http://my.redirect.uri&audience=https://localhost:8443/product-composite
+
+>>>
+
+https://${TENANT_DOMAIN_NAME}/authorize?response_type=code&scope=openid email product:read product:write&client_id=${CLIENT_ID}&state=98421&redirect_uri=http://my.redirect.uri&audience=https://localhost:8443/product-composite
+
+curl --request POST --url "https://${TENANT_DOMAIN_NAME}/oauth/token" --header "content-type: application/json" --data "{\"grant_type\":\"authorization_code\", \"client_id\":\"${CLIENT_ID}\", \"client_secret\":\"${CLIENT_SECRET}\", \"code\":\"${CODE}\", \"redirect_uri\":\"http://my.redirect.uri\"}" -s | jq
+
+>>>
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" https://${TENANT_DOMAIN_NAME}/userinfo -s | jq
