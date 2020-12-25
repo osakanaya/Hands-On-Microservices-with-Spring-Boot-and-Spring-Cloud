@@ -25,6 +25,9 @@ dependencies {
 	implementation "org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure"
 	implementation 'com.nimbusds:nimbus-jose-jwt:6.7'
 
+	implementation('org.springframework.cloud:spring-cloud-starter-config')
+	implementation('org.springframework.retry:spring-retry')
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 

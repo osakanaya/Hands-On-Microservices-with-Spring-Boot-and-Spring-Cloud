@@ -1,14 +1,6 @@
 server:
   port: 8761
 
-spring:
-  application:
-    name: eureka-server
-
-app:
-  eureka-username: u
-  eureka-password: p
-
 eureka:
   instance:
     hostname: localhost
@@ -21,5 +13,3 @@ eureka:
   server:
     waitTimeInMsWhenSyncEmpty: 0
     response-cache-update-interval-ms: 5000
-
-management.endpoints.web.exposure.include: "*"

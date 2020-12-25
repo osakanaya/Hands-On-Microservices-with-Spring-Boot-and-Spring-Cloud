@@ -24,7 +24,15 @@ import se.magnus.api.event.Event;
 import se.magnus.microservices.core.recommendation.persistence.RecommendationRepository;
 import se.magnus.util.exceptions.InvalidInputException;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"spring.data.mongodb.port: 0", "eureka.client.enabled=false"})
+@SpringBootTest(
+	webEnvironment = RANDOM_PORT, 
+	properties = {
+		"spring.data.mongodb.port: 0", 
+		"eureka.client.enabled=false",
+		"spring.cloud.config.enabled=false", 
+		"server.error.include-message=always"
+	}
+)
 class RecommendationServiceApplicationTests {
 
 	@Autowired

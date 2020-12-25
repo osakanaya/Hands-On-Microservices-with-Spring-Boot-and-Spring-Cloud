@@ -1,0 +1,16 @@
+api:
+
+  common:
+    version:
+    title:
+    description:
+    termsOfServiceUrl:
+    license:
+    licenseUrl:
+
+    contact:
+      name:
+      url:
+      email:
+
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://localhost:9999/.well-known/jwks.json

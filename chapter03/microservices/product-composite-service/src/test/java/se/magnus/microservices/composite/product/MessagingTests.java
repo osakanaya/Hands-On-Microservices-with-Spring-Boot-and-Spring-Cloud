@@ -34,7 +34,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import static java.util.Collections.singletonList;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"eureka.client.enabled=false"})
+@SpringBootTest(
+	webEnvironment = RANDOM_PORT, 
+	properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"}
+)
 public class MessagingTests {
 
 	@Autowired

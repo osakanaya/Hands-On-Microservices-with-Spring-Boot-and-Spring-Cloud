@@ -19,7 +19,7 @@ import org.springframework.dao.OptimisticLockingFailureException;
 import se.magnus.microservices.core.recommendation.persistence.RecommendationEntity;
 import se.magnus.microservices.core.recommendation.persistence.RecommendationRepository;
 
-@DataMongoTest
+@DataMongoTest(properties = {"spring.cloud.config.enabled=false"})
 public class PersistenceTests {
 
 	@Autowired
