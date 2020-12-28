@@ -3,10 +3,13 @@ package se.magnus.microservices.composite.product.services;
 import static reactor.core.publisher.Flux.empty;
 
 import java.io.IOException;
+import java.net.URI;
+import java.time.Duration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
@@ -14,9 +17,12 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.magnus.api.core.product.Product;
@@ -47,6 +53,8 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	
 	private MessageSources messageSources;
 	
+	private final int productServiceTimeoutSec;
+	
 	public interface MessageSources {
 		
 		String OUTPUT_PRODUCTS = "output-products";
@@ -67,11 +75,13 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	public ProductCompositeIntegration(
 		WebClient.Builder webClientBuilder,
 		ObjectMapper mapper,
-		MessageSources messageSources
+		MessageSources messageSources,
+		@Value("${app.product-service.timeoutSec}") int productServiceTimeoutSec
 	) {
 		this.webClientBuilder = webClientBuilder;
 		this.mapper = mapper;
 		this.messageSources = messageSources;
+		this.productServiceTimeoutSec = productServiceTimeoutSec;
 	}
 	
 	@Override
@@ -128,14 +138,21 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 		return body;
 	}
 
+	@Retry(name = "product")
+	@CircuitBreaker(name = "product")
 	@Override
-	public Mono<Product> getProduct(int productId) {
+	public Mono<Product> getProduct(int productId, int delay, int faultPercent) {
 
-		String url = productServiceUrl + "/product/" + productId;
+		URI url = UriComponentsBuilder
+					.fromUriString(productServiceUrl + "/product/{productId}?delay={delay}&faultPercent={faultPercent}")
+					.build(productId, delay, faultPercent);
+		
 		LOG.debug("Will call the getProduct API on URL: {}", url);
 
 		return getWebClient().get().uri(url).retrieve().bodyToMono(Product.class)
-				.log().onErrorMap(WebClientResponseException.class, ex -> handleHttpClientException(ex));
+				.log()
+				.onErrorMap(WebClientResponseException.class, ex -> handleHttpClientException(ex))
+				.timeout(Duration.ofSeconds(productServiceTimeoutSec));
 	}
 	
 	@Override
