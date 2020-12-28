@@ -79,3 +79,42 @@ curl --request POST --url "https://${TENANT_DOMAIN_NAME}/oauth/token" --header "
 >>>
 
 curl -H "Authorization: Bearer $ACCESS_TOKEN" https://${TENANT_DOMAIN_NAME}/userinfo -s | jq
+
+>>> p.382
+
+unset ACCESS_TOKEN
+ACCESS_TOKEN=$(curl -k https://writer:secret@localhost:8443/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq -r .access_token)
+echo $ACCESS_TOKEN
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/2 -w "%{http_code}\n" -o /dev/null -s
+
+docker run --rm -it --network=my-network alpine wget product-composite:8080/actuator/health -qO - | jq -r .components.circuitBreakers.details.product.details.state
+
+>>> 
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/2?delay=3 -s | jq .
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/2?delay=3 -s | jq .
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/2?delay=3 -s | jq .
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/2?delay=3 -s | jq .
+
+docker run --rm -it --network=my-network alpine wget product-composite:8080/actuator/health -qO - | jq -r .components.circuitBreakers.details.product.details.state
+
+>>>
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/2 -w "%{http_code}\n" -o /dev/null -s
+
+>>>
+docker run --rm -it --network=my-network alpine wget product-composite:8080/actuator/circuitbreakerevents/product/STATE_TRANSITION -qO - | jq -r .circuitBreakerEvents[].stateTransition
+
+>>>
+time curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/2?faultPercent=25 -w "%{http_code}\n" -o /dev/null -s
+
+time curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/2?faultPercent=75 -w "%{http_code}\n" -o /dev/null -s
+
+time curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/2?faultPercent=100 -w "%{http_code}\n" -o /dev/null -s
+
+docker run --rm -it --network=my-network alpine wget product-composite:8080/actuator/retryevents -qO - | jq .
+
