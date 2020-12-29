@@ -118,3 +118,14 @@ time curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/pro
 
 docker run --rm -it --network=my-network alpine wget product-composite:8080/actuator/retryevents -qO - | jq .
 
+>>>
+
+unset ACCESS_TOKEN
+ACCESS_TOKEN=$(curl -k https://writer:secret@localhost:8443/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq -r .access_token)
+echo $ACCESS_TOKEN
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/2 -w "%{http_code}\n" -o /dev/null -s
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/12345 -w "%{http_code}\n" -o /dev/null -s
+
+curl -X DELETE -H "Authorization: Bearer $ACCESS_TOKEN" -k https://localhost:8443/product-composite/12345 -w "%{http_code}\n" -o /dev/null -s
