@@ -29,7 +29,7 @@ spec:
               memory: 350Mi
           livenessProbe:
             httpGet:
-              scheme: HTTP
+              scheme: HTTPS
               path: /actuator/info
               port: 8443
             initialDelaySeconds: 10
@@ -39,7 +39,7 @@ spec:
             successThreshold: 1
           readinessProbe:
             httpGet:
-              scheme: HTTP
+              scheme: HTTPS
               path: /actuator/health
               port: 8443
             initialDelaySeconds: 10
