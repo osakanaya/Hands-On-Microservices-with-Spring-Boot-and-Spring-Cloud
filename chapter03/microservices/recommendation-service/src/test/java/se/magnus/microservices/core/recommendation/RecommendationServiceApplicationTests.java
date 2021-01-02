@@ -28,7 +28,6 @@ import se.magnus.util.exceptions.InvalidInputException;
 	webEnvironment = RANDOM_PORT, 
 	properties = {
 		"spring.data.mongodb.port: 0", 
-		"eureka.client.enabled=false",
 		"spring.cloud.config.enabled=false", 
 		"server.error.include-message=always"
 	}

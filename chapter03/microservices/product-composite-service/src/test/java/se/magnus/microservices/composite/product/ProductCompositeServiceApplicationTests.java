@@ -35,7 +35,6 @@ import static reactor.core.publisher.Mono.just;
 	webEnvironment = RANDOM_PORT, 
 	properties = {
 		"spring.main.allow-bean-definition-overriding=true", 
-		"eureka.client.enabled=false",
 		"spring.cloud.config.enabled=false"
 	}
 )

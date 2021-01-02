@@ -36,7 +36,7 @@ import static java.util.Collections.singletonList;
 
 @SpringBootTest(
 	webEnvironment = RANDOM_PORT, 
-	properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"}
+	properties = {"spring.cloud.config.enabled=false"}
 )
 public class MessagingTests {
 

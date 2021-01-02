@@ -61,9 +61,6 @@ api:
 server.port: 7000
 server.error.include-message: always
 
-ribbon.ServerListRefreshInterval: 5000
-ribbon.NFLoadBalancerPingInterval: 5
-
 spring.cloud.stream:
   defaultBinder: rabbit
   default.contentType: application/json
@@ -81,7 +78,8 @@ spring.cloud.stream:
       producer:
         required-groups: auditGroup
 
-spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
+#spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}/.well-known/jwks.json
 
 #spring.security.oauth2.resourceserver.jwt.issuer-uri: https://xxxxx.auth0.com/
 
@@ -119,7 +117,7 @@ logging:
 ---
 spring.profiles: docker
 
-server.port: 8080
+server.port: 80
 
 ---
 spring.profiles: streaming_partitioned
