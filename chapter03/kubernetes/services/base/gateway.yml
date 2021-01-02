@@ -53,6 +53,7 @@ kind: Service
 metadata:
   name: gateway
 spec:
+  type: NodePort
   selector:
     app: gateway
   ports:
