@@ -23,8 +23,8 @@ spec:
         envFrom:
         - secretRef:
             name: rabbitmq-zipkin-credentials
-       ports:
-        - containerPort: 9411
+        ports:
+          - containerPort: 9411
         resources:
           limits:
             memory: 512Mi
