@@ -35,8 +35,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static java.util.Collections.singletonList;
 
 @SpringBootTest(
-	webEnvironment = RANDOM_PORT, 
-	properties = {"spring.cloud.config.enabled=false"}
+	webEnvironment = RANDOM_PORT
 )
 public class MessagingTests {
 

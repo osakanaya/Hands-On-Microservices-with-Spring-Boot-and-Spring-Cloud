@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import se.magnus.microservices.core.review.persistence.ReviewEntity;
 import se.magnus.microservices.core.review.persistence.ReviewRepository;
 
-@DataJpaTest(properties = {"spring.cloud.config.enabled=false"})
+@DataJpaTest
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 public class PersistenceTests {
 

@@ -34,8 +34,7 @@ import static reactor.core.publisher.Mono.just;
 @SpringBootTest(
 	webEnvironment = RANDOM_PORT, 
 	properties = {
-		"spring.main.allow-bean-definition-overriding=true", 
-		"spring.cloud.config.enabled=false"
+		"spring.main.allow-bean-definition-overriding=true"
 	}
 )
 public class ProductCompositeServiceApplicationTests {
