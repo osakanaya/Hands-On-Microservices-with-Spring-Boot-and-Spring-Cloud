@@ -134,3 +134,11 @@ spring.cloud.stream.bindings.output-reviews.producer:
   partition-key-expression: payload.key
   partition-count: 2
 
+---
+spring.profiles: prod
+
+logging:
+  level:
+    root: WARN
+    se.magnus: WARN
+    org.springframework.web.server.adapter.HttpWebHandlerAdapter: WARN
