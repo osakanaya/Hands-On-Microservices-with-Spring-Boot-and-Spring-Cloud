@@ -28,7 +28,6 @@ dependencies {
 	implementation 'org.springframework.retry:spring-retry'
 
 	implementation('org.springframework.cloud:spring-cloud-starter-sleuth')
-	implementation('org.springframework.cloud:spring-cloud-starter-zipkin')
 
 	implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
 	implementation('org.springframework.cloud:spring-cloud-starter-stream-kafka')

@@ -35,7 +35,6 @@ dependencies {
 	implementation('org.springframework.retry:spring-retry')
 
 	implementation('org.springframework.cloud:spring-cloud-starter-sleuth')
-	implementation('org.springframework.cloud:spring-cloud-starter-zipkin')
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
