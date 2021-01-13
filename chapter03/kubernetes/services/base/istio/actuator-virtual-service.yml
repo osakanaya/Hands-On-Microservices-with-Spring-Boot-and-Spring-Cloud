@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: actuator-vs
+spec:
+  hosts:
+  - "istio.uohiro.me.uk"
+  gateways:
+  - hands-on-gw
+  http:
+  - match:
+    - uri:
+        prefix: /actuator/health
+    route:
+    - destination:
+        port:
+          number: 4004
+        host: product-composite

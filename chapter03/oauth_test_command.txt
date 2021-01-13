@@ -138,3 +138,11 @@ echo $ACCESS_TOKEN
 
 curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://minikube.me/product-composite/2 -s
 
+>>>
+
+unset ACCESS_TOKEN
+ACCESS_TOKEN=$(curl -k https://writer:secret@istio.uohiro.me.uk/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq -r .access_token)
+echo $ACCESS_TOKEN
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://istio.uohiro.me.uk/product-composite/2 -s
+

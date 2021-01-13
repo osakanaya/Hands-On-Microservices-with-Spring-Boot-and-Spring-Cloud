@@ -1,29 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  auth-server
+  name: review
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app:  auth-server
+      app: review
   template:
     metadata:
       labels:
-        app:  auth-server
+        app: review
+        version: latest
     spec:
       containers:
-      - name: auth-server
-        image: hands-on/auth-server
-        imagePullPolicy: Never
+      - name: rev
+        image: 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/review-service:latest
+        imagePullPolicy: IfNotPresent
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "docker"
         - name: SPRING_CONFIG_LOCATION
-          value: file:/config-repo/application.yml,file:/config-repo/auth-server.yml
+          value: file:/config-repo/application.yml,file:/config-repo/review.yml
         envFrom:
         - secretRef:
             name: rabbitmq-credentials
+        - secretRef:
+            name: mysql-credentials
         ports:
         - containerPort: 80
         resources:
@@ -33,7 +36,7 @@ spec:
           httpGet:
             scheme: HTTP
             path: /actuator/info
-            port: 80
+            port: 4004
           initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 2
@@ -43,7 +46,7 @@ spec:
           httpGet:
             scheme: HTTP
             path: /actuator/health
-            port: 80
+            port: 4004
           initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 2
@@ -55,15 +58,4 @@ spec:
       volumes:
       - name: config-repo-volume
         configMap:
-          name: config-repo-auth-server
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: auth-server
-spec:
-  selector:
-    app: auth-server
-  ports:
-  - port: 80
-    targetPort: 80
+          name: config-repo-review

@@ -1,0 +1,5 @@
+resources:
+- gateway.yml
+- auth-server-virtual-service.yml
+- product-composite-virtual-service.yml
+- actuator-virtual-service.yml
