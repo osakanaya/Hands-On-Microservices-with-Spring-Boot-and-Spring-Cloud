@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: review
+spec:
+  selector:
+    matchLabels:
+      app: review
+  template:
+    metadata:
+      labels:
+        app: review
+        version: v1
+    spec:
+      containers:
+      - name: rev
+        image: 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/review-service:v1
+        resources:
+          requests:
+            memory: "200Mi"
+          limits:
+            memory: "400Mi"

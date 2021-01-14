@@ -56,7 +56,7 @@ spring.cloud.stream.bindings.input.consumer.instanceIndex: 1
 ---
 spring.profiles: prod
 
-spring.data.mongodb.host: 172.17.0.1
+#spring.data.mongodb.host: 172.17.0.1
 
 logging:
   level:

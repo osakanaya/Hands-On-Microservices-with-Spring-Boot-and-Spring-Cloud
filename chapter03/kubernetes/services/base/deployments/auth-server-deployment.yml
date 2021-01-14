@@ -16,7 +16,7 @@ spec:
       containers:
       - name: auth-server
         image: 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/auth-server:latest
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "docker"

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.http.HttpHeaders;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
@@ -85,12 +86,14 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	}
 	
 	@Override
-	public Flux<Review> getReviews(int productId) {
+	public Flux<Review> getReviews(HttpHeaders headers, int productId) {
 
 		String url = reviewServiceUrl + "/review?productId=" + productId;
 		LOG.debug("Will call the getReviews API on URL: {}", url);
 
-		return getWebClient().get().uri(url).retrieve().bodyToFlux(Review.class).onErrorResume(error -> empty());
+		return getWebClient().get().uri(url)
+				.headers(h -> h.addAll(headers))
+				.retrieve().bodyToFlux(Review.class).onErrorResume(error -> empty());
 			
 	}
 
@@ -109,12 +112,14 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	}
 
 	@Override
-	public Flux<Recommendation> getRecommendations(int productId) {
+	public Flux<Recommendation> getRecommendations(HttpHeaders headers, int productId) {
 
 		String url = recommendationServiceUrl + "/recommendation?productId=" + productId;
 		LOG.debug("Will call the getRecommendations API on URL: {}", url);
 		
-		return getWebClient().get().uri(url).retrieve().bodyToFlux(Recommendation.class)
+		return getWebClient().get().uri(url)
+				.headers(h -> h.addAll(headers))
+				.retrieve().bodyToFlux(Recommendation.class)
 				.log().onErrorResume(error -> empty());			
 	}
 
@@ -141,7 +146,7 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	@Retry(name = "product")
 	@CircuitBreaker(name = "product")
 	@Override
-	public Mono<Product> getProduct(int productId, int delay, int faultPercent) {
+	public Mono<Product> getProduct(HttpHeaders headers, int productId, int delay, int faultPercent) {
 
 		URI url = UriComponentsBuilder
 					.fromUriString(productServiceUrl + "/product/{productId}?delay={delay}&faultPercent={faultPercent}")
@@ -149,8 +154,9 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 		
 		LOG.debug("Will call the getProduct API on URL: {}", url);
 
-		return getWebClient().get().uri(url).retrieve().bodyToMono(Product.class)
-				.log()
+		return getWebClient().get().uri(url)
+				.headers(h -> h.addAll(headers))
+				.retrieve().bodyToMono(Product.class).log()
 				.onErrorMap(WebClientResponseException.class, ex -> handleHttpClientException(ex))
 				.timeout(Duration.ofSeconds(productServiceTimeoutSec));
 	}

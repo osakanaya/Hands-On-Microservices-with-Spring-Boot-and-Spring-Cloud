@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendation
+spec:
+  selector:
+    matchLabels:
+      app: recommendation
+  template:
+    metadata:
+      labels:
+        app: recommendation
+        version: v1
+    spec:
+      containers:
+      - name: rec
+        image: 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/recommendation-service:v1
+        resources:
+          requests:
+            memory: "200Mi"
+          limits:
+            memory: "400Mi"

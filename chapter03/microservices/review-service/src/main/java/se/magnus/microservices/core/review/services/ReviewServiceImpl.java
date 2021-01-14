@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RestController;
 
 import reactor.core.publisher.Flux;
@@ -40,7 +41,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 	
 	@Override
-	public Flux<Review> getReviews(int productId) {
+	public Flux<Review> getReviews(HttpHeaders headers, int productId) {
 		if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
 
 		LOG.info("Will get reviews for product with id={}", productId);

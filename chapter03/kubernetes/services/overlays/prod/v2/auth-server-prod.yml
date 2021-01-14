@@ -1,22 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: recommendation
+  name: auth-server
 spec:
   selector:
     matchLabels:
-      app: recommendation
+      app: auth-server
   template:
     metadata:
       labels:
-        app: recommendation
+        app: auth-server
+        version: v2
     spec:
       containers:
-      - name: rec
-        image: hands-on/recommendation-service:v1
-        env:
-          - name: SPRING_PROFILES_ACTIVE
-            value: "docker,prod"
+      - name: auth-server
+        image: 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/auth-server:v2
         resources:
           requests:
             memory: "200Mi"

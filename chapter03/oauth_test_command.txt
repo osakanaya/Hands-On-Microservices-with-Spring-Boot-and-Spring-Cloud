@@ -152,7 +152,7 @@ unset ACCESS_TOKEN
 ACCESS_TOKEN=$(curl -k https://writer:secret@istio.uohiro.me.uk/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq -r .access_token)
 echo $ACCESS_TOKEN
 
-siege https://istio.uohiro.me.uk/product-composite/2 -H "Authorization: Bearer $ACCESS_TOKEN" -c1 -d1
+siege https://istio.uohiro.me.uk/product-composite/2 -H "Authorization: Bearer $ACCESS_TOKEN" -c1 -d1 -v
 
 >>>
 
@@ -175,3 +175,13 @@ curl -H "Authorization: Bearer $ACCESS_TOKEN" -k https://istio.uohiro.me.uk/prod
 
 >>>
 HOST=istio.uohiro.me.uk PORT=443 HEALTH_URL=https://istio.uohiro.me.uk ./test-em-all.bash
+
+>>>
+HOST=istio.uohiro.me.uk PORT=443 SKIP_CB_TESTS=true ./test-em-all.bash
+
+>>>
+
+kubectl patch virtualservice review-vs --type=json -p='[
+  {"op": "add", "path": "/spec/http/1/route/0/weight", "value": 80},
+  {"op": "add", "path": "/spec/http/1/route/1/weight", "value": 20}
+]'

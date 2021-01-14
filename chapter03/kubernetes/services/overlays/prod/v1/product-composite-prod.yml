@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-composite
+spec:
+  selector:
+    matchLabels:
+      app: product-composite
+  template:
+    metadata:
+      labels:
+        app: product-composite
+        version: v1
+    spec:
+      containers:
+      - name: comp
+        image: 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/product-composite-service:v1
+        resources:
+          requests:
+            memory: "200Mi"
+          limits:
+            memory: "400Mi"

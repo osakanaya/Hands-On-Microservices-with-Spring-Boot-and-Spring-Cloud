@@ -1,0 +1,86 @@
+
+https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/sample-deployment.html
+https://stackify.com/docker-build-a-beginners-guide-to-building-docker-images/
+https://istio.io/latest/docs/setup/getting-started/
+https://qiita.com/toshiki1007/items/896c79d94755686e57cd
+
+>>>
+
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+
+kubectl exec "$(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}')" -c ratings -- curl -s productpage:9080/productpage | grep -o "<title>.*</title>"
+
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+
+export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+
+kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+
+
+>>>
+
+kubectl port-forward deploy/prometheus -n istio-system 9090:9090
+kubectl port-forward deploy/kiali -n istio-system 20001:20001
+kubectl port-forward service/tracing -n istio-system 8082:80
+kubectl port-forward service/zipkin -n istio-system 9411:9411
+>>>
+
+
+https://medium.com/faun/managing-tls-keys-and-certs-in-istio-using-amazons-acm-8ff9a0b99033
+https://qiita.com/kikeyama/items/1867f654df37a0cb9672
+https://medium.com/@cy.chiang/how-to-integrate-aws-alb-with-istio-v1-0-b17e07cae156
+https://stackoverflow.com/questions/62407364/how-to-set-aws-alb-instead-of-elb-in-istio
+
+>>>
+
+kubectl delete -f samples/addons
+istioctl manifest generate --set profile=demo | kubectl delete --ignore-not-found=true -f -
+
+kubectl delete namespace istio-system
+
+kubectl label namespace default istio-injection-
+
+>>>
+
+istioctl install --set profile=demo -y
+
+kubectl label namespace default istio-injection=enabled
+
+>>>
+
+kubectl apply -f samples/addons
+
+>>>
+
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+
+kubectl get services
+
+kubectl get pods
+
+
+
+>>>
+
+$ kubectl -n istio-system patch service istio-ingressgateway --patch "$(cat ingressgateway-patch.yml)"
+
+metadata:
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:ap-northeast-1:102132116425:certificate/9b194cc7-1d8c-4c9b-a606-6f8951d4811d"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+
+>>>
+
+https://www.istiobyexample.dev/jwt
+
+>>>
+
+https://medium.com/intelligentmachines/istio-jwt-step-by-step-guide-for-micro-services-authentication-690b170348fc
+
+>>>
+
+https://thinkit.co.jp/article/18023

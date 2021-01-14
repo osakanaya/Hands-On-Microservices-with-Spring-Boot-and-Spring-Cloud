@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -106,20 +107,38 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Mono<ProductAggregate> getCompositeProduct(int productId, int delay, int faultPercent) {
+	public Mono<ProductAggregate> getCompositeProduct(HttpHeaders requestHeaders, int productId, int delay, int faultPercent) {
+		
+		HttpHeaders headers = getHeaders(requestHeaders, "X-group");
 		
 		return Mono.zip(
 			values -> createProductAggregate((SecurityContext)values[0],
 					(Product)values[1], (List<Recommendation>)values[2], 
 					(List<Review>)values[3], serviceUtil.getServiceAddress()),
 			ReactiveSecurityContextHolder.getContext().defaultIfEmpty(nullSC),
-			integration.getProduct(productId, delay, faultPercent)
+			integration.getProduct(headers, productId, delay, faultPercent)
 				.onErrorReturn(CallNotPermittedException.class, getProductFallbackValue(productId)),
-			integration.getRecommendations(productId).collectList(),
-			integration.getReviews(productId).collectList()
+			integration.getRecommendations(headers, productId).collectList(),
+			integration.getReviews(headers, productId).collectList()
 		)
 		.doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex.toString()))
 		.log();
+	}
+	
+	private HttpHeaders getHeaders(HttpHeaders requestHeaders, String... headers) {
+		LOG.trace("Will look for {} headers: {}", headers.length, headers);
+		
+		HttpHeaders h = new HttpHeaders();		
+		for (String header : headers) {
+			List<String> value = requestHeaders.get(header);
+			if (value != null) {
+				h.addAll(header, value);
+			}
+		}
+		
+		LOG.trace("Will transfer {}, headers: {}", h.size(), h);
+		
+		return h;
 	}
 	
 	private Product getProductFallbackValue(int productId) {

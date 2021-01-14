@@ -1,10 +1,12 @@
 package se.magnus.api.composite.product;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.annotations.Api;
@@ -30,6 +32,7 @@ public interface ProductCompositeService {
 		produces = "application/json"
 	)
 	Mono<ProductAggregate> getCompositeProduct(
+		@RequestHeader HttpHeaders headers,
 		@PathVariable int productId,
 		@RequestParam(value = "delay", required = false, defaultValue = "0") int delay,
 		@RequestParam(value = "faultPercent", required = false, defaultValue = "0") int faultPercent

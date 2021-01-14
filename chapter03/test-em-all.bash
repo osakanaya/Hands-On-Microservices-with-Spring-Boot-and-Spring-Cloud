@@ -270,7 +270,7 @@ then
     docker-compose up -d
 fi
 
-waitForService curl -k $HEALTH_URL/actuator/health
+#waitForService curl -k $HEALTH_URL/actuator/health
 
 ACCESS_TOKEN=$(curl -k https://writer:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
 AUTH="-H \"Authorization: Bearer $ACCESS_TOKEN\""
@@ -309,7 +309,12 @@ assertCurl 400 "curl -k https://$HOST:$PORT/product-composite/invalidProductId $
 assertEqual "\"Type mismatch.\"" "$(echo $RESPONSE | jq .message)"
 
 # Verify that a request without access token fails on 401, Unauthorized
-assertCurl 403 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
+if [ "$HOST" = "localhost" ]
+then
+    assertCurl 401 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
+else
+    assertCurl 403 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
+fi
 
 # Verify that the reader - client with only read scope can call the read API but not delete API.
 READER_ACCESS_TOKEN=$(curl -k https://reader:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
