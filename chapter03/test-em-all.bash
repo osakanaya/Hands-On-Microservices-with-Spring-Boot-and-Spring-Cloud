@@ -309,7 +309,7 @@ assertCurl 400 "curl -k https://$HOST:$PORT/product-composite/invalidProductId $
 assertEqual "\"Type mismatch.\"" "$(echo $RESPONSE | jq .message)"
 
 # Verify that a request without access token fails on 401, Unauthorized
-assertCurl 401 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
+assertCurl 403 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
 
 # Verify that the reader - client with only read scope can call the read API but not delete API.
 READER_ACCESS_TOKEN=$(curl -k https://reader:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
