@@ -16,7 +16,7 @@ spec:
       containers:
       - name: rev
         image: 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/review-service:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "docker"

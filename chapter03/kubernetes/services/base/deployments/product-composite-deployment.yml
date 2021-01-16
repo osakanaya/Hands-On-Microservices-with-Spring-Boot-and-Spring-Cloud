@@ -16,7 +16,7 @@ spec:
       containers:
       - name: comp
         image: 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/product-composite-service:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "docker"

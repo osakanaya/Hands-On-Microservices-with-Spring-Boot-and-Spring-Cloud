@@ -35,8 +35,8 @@ public class RecommendationServiceImpl implements RecommendationService {
 	@Override
 	public Flux<Recommendation> getRecommendations(HttpHeaders headers, int productId) {
 		if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
-		
-		LOG.debug("No recommendations found for productId: {}", productId);
+
+        LOG.info("Will get recommendations for product with id={}", productId);
 
 		return repository.findByProductId(productId)
 			.log()

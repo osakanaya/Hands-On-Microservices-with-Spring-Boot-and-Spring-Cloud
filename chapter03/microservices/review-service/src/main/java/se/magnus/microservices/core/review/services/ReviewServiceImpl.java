@@ -44,7 +44,7 @@ public class ReviewServiceImpl implements ReviewService {
 	public Flux<Review> getReviews(HttpHeaders headers, int productId) {
 		if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
 
-		LOG.info("Will get reviews for product with id={}", productId);
+        LOG.info("Will get reviews for product with id={}", productId);
 
 		return asyncFlux(() -> Flux.fromIterable(getByProductId(productId))).log(null, FINE);		
 	}

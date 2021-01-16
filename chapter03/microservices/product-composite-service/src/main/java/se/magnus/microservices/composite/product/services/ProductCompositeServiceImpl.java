@@ -109,6 +109,8 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
 	@Override
 	public Mono<ProductAggregate> getCompositeProduct(HttpHeaders requestHeaders, int productId, int delay, int faultPercent) {
 		
+        LOG.info("Will get composite product info for product.id={}", productId);
+
 		HttpHeaders headers = getHeaders(requestHeaders, "X-group");
 		
 		return Mono.zip(

@@ -1,6 +1,8 @@
 server.port: 7003
 server.error.include-message: always
 
+spring.application.name: review
+
 spring.jpa.hibernate.ddl-auto: update
 
 spring.datasource:

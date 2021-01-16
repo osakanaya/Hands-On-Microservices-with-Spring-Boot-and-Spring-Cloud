@@ -25,6 +25,7 @@ kubectl port-forward deploy/prometheus -n istio-system 9090:9090
 kubectl port-forward deploy/kiali -n istio-system 20001:20001
 kubectl port-forward service/tracing -n istio-system 8082:80
 kubectl port-forward service/zipkin -n istio-system 9411:9411
+
 >>>
 
 
@@ -84,3 +85,8 @@ https://medium.com/intelligentmachines/istio-jwt-step-by-step-guide-for-micro-se
 >>>
 
 https://thinkit.co.jp/article/18023
+
+>>>
+
+kubectl port-forward service/elasticsearch -n logging 9200:9200
+kubectl port-forward service/kibana -n logging 5601:5601

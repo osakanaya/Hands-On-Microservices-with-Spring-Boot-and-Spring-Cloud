@@ -46,6 +46,8 @@ public class ProductServiceImpl implements ProductService {
 		
 		if (faultPercent > 0) throwErrorIfBadLuck(faultPercent);
 
+        LOG.info("Will get product info for id={}", productId);
+
 		return repository.findByProductId(productId)
 			.switchIfEmpty(error(new NotFoundException("No product found for productId: " + productId)))
 			.log()

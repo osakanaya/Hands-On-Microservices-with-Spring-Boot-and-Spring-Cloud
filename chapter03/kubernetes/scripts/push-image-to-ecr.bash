@@ -27,6 +27,8 @@ docker tag hands-on/auth-server:latest 102132116425.dkr.ecr.ap-northeast-1.amazo
 
 docker tag hands-on/gateway:latest 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/gateway:latest
 
+docker tag hands-on/fluentd:v1 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/fluentd:v1
+
 docker push 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/product-service:latest
 docker push 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/product-service:v1
 docker push 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/product-service:v2
@@ -48,5 +50,7 @@ docker push 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/auth-server:v1
 docker push 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/auth-server:v2
 
 docker push 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/gateway:latest
+
+docker push 102132116425.dkr.ecr.ap-northeast-1.amazonaws.com/fluentd:v1
 
 set +ex
