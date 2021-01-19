@@ -25,6 +25,9 @@ kubectl port-forward deploy/prometheus -n istio-system 9090:9090
 kubectl port-forward deploy/kiali -n istio-system 20001:20001
 kubectl port-forward service/tracing -n istio-system 8082:80
 kubectl port-forward service/zipkin -n istio-system 9411:9411
+kubectl port-forward service/grafana -n istio-system 3000:3000
+
+kubectl port-forward service/mail-server 8080:80
 
 >>>
 
